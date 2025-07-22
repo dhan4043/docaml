@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOCaml Interpreter</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=IBM+Plex+Sans:wght@300&family=Inter:wght@700&family=JetBrains+Mono&family=Source+Code+Pro&display=swap');
+
+    body {
+      font-family: 'Source Code Pro', monospace;
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      font-family: 'Inter', monospace;
+      color: #FFFFFF;
+    }
+
+    h4 {
+      font-family: 'Inter', monospace;
+    }
+
+    .interpreter-container {
+      margin-top: 20px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      background-color: #007acc;
+      border-color: #007acc;
+      margin-right: 10px;
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+
+    #resultOutput {
+      font-family: 'Fira Code', monospace;
+      margin-top: 20px;
+      background-color: #282c34;
+      color: #d4d4d4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      height: 200px;
+    }
+
+    #tokensOutput,
+    #astOutput {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px;
+      margin-top: 20px;
+      background-color: #282c34;
+      color: #d4d4d4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      height: 200px;
+    }
+
+    #buttonsContainer {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2 class="mt-3">VSDocs 💻</h2>
+
+    <div id="resultOutput" class="mt-4"></div>
+
+    <div id="buttonsContainer" class="interpreter-container">
+      <button class="btn btn-primary btn-sm" onclick="runInterpreter()">Run 🏃‍♂️</button>
+      <button class="btn btn-secondary btn-sm" onclick="runLinter()">Highlight 📖</button>
+    </div>
+
+    <div class="output-container mt-4">
+      <h4>Tokens</h4>
+      <pre id="tokensOutput" class="output-box"></pre>
+    </div>
+
+    <div class="output-container mt-4">
+      <h4>AST</h4>
+      <pre id="astOutput" class="output-box"></pre>
+    </div>
+  </div>
+
+  <script>
+    function runInterpreter() {
+      const resultOutput = document.getElementById('resultOutput');
+      google.script.run
+        .withSuccessHandler(result => {
+          resultOutput.innerHTML = result;
+        })
+        .withFailureHandler(error => {
+          resultOutput.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+        })
+        .interp();
+      runTokenize();
+      runParse();
+      }
+    
+    function runLinter() {
+      const resultOutput = document.getElementById('resultOutput');
+      google.script.run
+        .withSuccessHandler()
+        .withFailureHandler(error => {
+          resultOutput.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+        })
+        .highlightAndLint();
+    }
+
+    function runTokenize() {
+      const tokensOutput = document.getElementById('tokensOutput');
+      google.script.run
+        .withSuccessHandler(result => {
+          tokensOutput.innerHTML = result;
+        })
+        .withFailureHandler(``)
+        .genTokens();
+    }
+
+    function runParse() {
+      const astOutput = document.getElementById('astOutput');
+      google.script.run
+        .withSuccessHandler(result => {
+          astOutput.innerHTML = result;
+        })
+        .withFailureHandler(``)
+        .genAst();
+    }
+  </script>
+</body>
+
+</html>
